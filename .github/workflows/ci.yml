@@ -1,11 +1,8 @@
-name: ahj-homeworks-rxjs-frontend
+name: Netology AHJ
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: [push, pull_request]
 
+# Down scope as necessary via https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
 permissions:
   checks: write
   contents: write
@@ -25,42 +22,30 @@ jobs:
         node-version: [18.x]
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    
-    - name: Install Backend
-      run: npm --prefix backend/ install
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Test Backend
-      run: npm --prefix backend/ run lint
+      - name: Install dependencies
+        run: npm install
 
-    - name: Typescript Backend
-      run: npm --prefix backend/ run tsc
+      - name: Run linters
+        run: npm run lint
 
-    - name: Install Frontend
-      run: npm --prefix frontend/ install
+      - name: Build
+        run: npm run build
 
-    - name: Test Frontend
-      run: npm --prefix frontend/ run lint
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
 
-    - name: Typescript Frontend
-      run: npm --prefix frontend/ run tsc
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'dist'
 
-    - name: Build Frontend
-      run: npm --prefix frontend/ run build
-
-    - name: Setup Pages
-      uses: actions/configure-pages@v2
-
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v1
-      with:
-        path: 'frontend/dist'
-
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v1
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
